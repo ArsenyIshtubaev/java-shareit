@@ -1,7 +1,7 @@
 package ru.practicum.shareit.annotation;
 
-import ru.yandex.practicum.ShareIt.exception.StorageException;
-import ru.yandex.practicum.ShareIt.user.UserDto;
+import ru.practicum.shareit.exception.StorageException;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
