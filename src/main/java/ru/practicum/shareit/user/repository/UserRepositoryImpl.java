@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository{
+public class UserRepositoryImpl implements UserRepository {
 
     private final List<User> users = new ArrayList<>();
+    private static long id = 0;
 
     @Override
     public Optional<User> findById(long userId) {
@@ -26,7 +27,7 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public User save(User user) {
-        user.setId(getId());
+        user.setId(generateId());
         users.add(user);
         return user;
     }
@@ -43,11 +44,7 @@ public class UserRepositoryImpl implements UserRepository{
         users.remove(findById(userId).get());
     }
 
-    private long getId() {
-        long lastId = users.stream()
-                .mapToLong(User::getId)
-                .max()
-                .orElse(0);
-        return lastId + 1;
+    private long generateId() {
+        return ++id;
     }
 }

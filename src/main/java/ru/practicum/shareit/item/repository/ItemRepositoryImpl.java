@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
@@ -11,6 +11,8 @@ import java.util.Optional;
 public class ItemRepositoryImpl implements ItemRepository {
 
     private final List<Item> items = new ArrayList<>();
+
+    private static long id = 0;
 
     @Override
     public Optional<Item> findById(long itemId) {
@@ -26,7 +28,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item save(Item item) {
-        item.setId(getId());
+        item.setId(generateId());
         items.add(item);
         return item;
     }
@@ -43,11 +45,19 @@ public class ItemRepositoryImpl implements ItemRepository {
         items.remove(findById(itemId).get());
     }
 
-    private long getId() {
-        long lastId = items.stream()
-                .mapToLong(Item::getId)
-                .max()
-                .orElse(0);
-        return lastId + 1;
+    @Override
+    public List<Item> searchItem(String text) {
+        List<Item> findItems = new ArrayList<>();
+        for (Item item : items) {
+            String search = (item.getName() + item.getDescription()).toLowerCase();
+            if (!text.isBlank() && search.contains(text.toLowerCase()) && item.getAvailable()) {
+                findItems.add(item);
+            }
+        }
+        return findItems;
+    }
+
+    private long generateId() {
+        return ++id;
     }
 }
