@@ -1,4 +1,4 @@
-# ![](C:\Users\arsen\devWork\java-shareit\sharing-.jpg)
+# <img src="C:\Users\arsen\devWork\java-shareit\sharing.png"/>
 
 ---
 
