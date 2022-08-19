@@ -28,7 +28,6 @@ public class ItemServiceImpl implements ItemService {
         this.userRepository = userRepository;
     }
 
-
     @Override
     public ItemDto findById(long itemId) {
         if (itemRepository.findById(itemId).isPresent()) {
