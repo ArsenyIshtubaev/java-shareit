@@ -14,7 +14,7 @@ public class BookingMapper {
                 booking.getItem(),
                 booking.getBooker(),
                 booking.getStatus()
-                );
+        );
     }
 
     public Booking toBooking(BookingDto bookingDto) {
@@ -25,6 +25,7 @@ public class BookingMapper {
                 bookingDto.getBooker(),
                 bookingDto.getStatus());
     }
+
     public Booking fromSimpleToBooking(BookingDtoSimple bookingDtoSimple) {
         return new Booking(bookingDtoSimple.getId(),
                 bookingDtoSimple.getStart(),
@@ -33,6 +34,7 @@ public class BookingMapper {
                 null,
                 Status.WAITING);
     }
+
     public BookingDtoForItem toBookingDtoForItem(Booking booking) {
         return new BookingDtoForItem(booking.getId(),
                 booking.getBooker().getId()

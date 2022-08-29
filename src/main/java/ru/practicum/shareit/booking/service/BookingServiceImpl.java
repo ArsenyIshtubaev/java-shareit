@@ -30,7 +30,8 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper mapper;
 
     @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository, ItemRepository itemRepository, UserRepository userRepository, BookingMapper mapper) {
+    public BookingServiceImpl(BookingRepository bookingRepository, ItemRepository itemRepository,
+                              UserRepository userRepository, BookingMapper mapper) {
         this.bookingRepository = bookingRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
@@ -54,35 +55,29 @@ public class BookingServiceImpl implements BookingService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new StorageException("Incorrect userId");
         }
-        List<BookingDto> result = bookingRepository.findAll().stream()
-                .filter(booking -> booking.getBooker().getId() == (userId))
-                .map(mapper::toBookingDto).collect(Collectors.toList());
+        List<BookingDto> result = bookingRepository.findAll().stream().filter(booking ->
+                booking.getBooker().getId() == (userId)).map(mapper::toBookingDto).collect(Collectors.toList());
         switch (state) {
             case ("ALL"):
                 result.sort(Comparator.comparing(BookingDto::getStart).reversed());
                 break;
             case ("CURRENT"):
-                return bookingRepository.findCurrentBookingsByBooker_IdOrderByStartDesc
-                                (userId, LocalDateTime.now())
-                        .stream()
-                        .map(mapper::toBookingDto).collect(Collectors.toList());
+                return bookingRepository.findCurrentBookingsByBooker_IdOrderByStartDesc(userId,
+                        LocalDateTime.now()).stream().map(mapper::toBookingDto).collect(Collectors.toList());
             case ("PAST"):
-                return bookingRepository.findBookingsByBooker_IdAndEndIsBeforeOrderByStartDesc
-                                (userId, LocalDateTime.now())
-                        .stream()
-                        .map(mapper::toBookingDto).collect(Collectors.toList());
+                return bookingRepository.findBookingsByBooker_IdAndEndIsBeforeOrderByStartDesc(userId,
+                        LocalDateTime.now()).stream().map(mapper::toBookingDto).collect(Collectors.toList());
             case ("FUTURE"):
-                return bookingRepository.findAllByStartAfterOrderByStartDesc(LocalDateTime.now()).stream()
+                return bookingRepository.findAllByStartAfterOrderByStartDesc(LocalDateTime.now())
+                        .stream()
                         .filter(booking -> booking.getBooker().getId().equals(result.get(0).getBooker().getId()))
                         .map(mapper::toBookingDto).collect(Collectors.toList());
             case ("WAITING"):
-                return bookingRepository.findBookingsByBooker_IdOrderByStartDesc(userId)
-                        .stream()
+                return bookingRepository.findBookingsByBooker_IdOrderByStartDesc(userId).stream()
                         .filter(booking -> booking.getStatus().equals(Status.WAITING))
                         .map(mapper::toBookingDto).collect(Collectors.toList());
             case ("REJECTED"):
-                return bookingRepository.findBookingsByBooker_IdOrderByStartDesc(userId)
-                        .stream()
+                return bookingRepository.findBookingsByBooker_IdOrderByStartDesc(userId).stream()
                         .filter(booking -> booking.getStatus().equals(Status.REJECTED))
                         .map(mapper::toBookingDto).collect(Collectors.toList());
             default:
@@ -173,25 +168,20 @@ public class BookingServiceImpl implements BookingService {
                 result.sort(Comparator.comparing(BookingDto::getStart).reversed());
                 break;
             case ("CURRENT"):
-                return bookingRepository.findCurrentBookingsByItem_Owner_IdOrderByStartDesc(userId, LocalDateTime.now())
-                        .stream()
-                        .map(mapper::toBookingDto).collect(Collectors.toList());
+                return bookingRepository.findCurrentBookingsByItem_Owner_IdOrderByStartDesc(userId,
+                        LocalDateTime.now()).stream().map(mapper::toBookingDto).collect(Collectors.toList());
             case ("PAST"):
-                return bookingRepository.findBookingsByItem_Owner_IdAndEndIsBeforeOrderByStartDesc
-                                (userId, LocalDateTime.now())
-                        .stream()
-                        .map(mapper::toBookingDto).collect(Collectors.toList());
+                return bookingRepository.findBookingsByItem_Owner_IdAndEndIsBeforeOrderByStartDesc(userId,
+                        LocalDateTime.now()).stream().map(mapper::toBookingDto).collect(Collectors.toList());
             case ("FUTURE"):
-                return bookingRepository.searchBookingByItem_Owner_IdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now())
-                        .stream().map(mapper::toBookingDto).collect(Collectors.toList());
+                return bookingRepository.searchBookingByItem_Owner_IdAndStartIsAfterOrderByStartDesc(userId,
+                        LocalDateTime.now()).stream().map(mapper::toBookingDto).collect(Collectors.toList());
             case ("WAITING"):
-                return bookingRepository.findBookingsByItem_Owner_IdOrderByStartDesc(userId)
-                        .stream()
+                return bookingRepository.findBookingsByItem_Owner_IdOrderByStartDesc(userId).stream()
                         .filter(booking -> booking.getStatus().equals(Status.WAITING))
                         .map(mapper::toBookingDto).collect(Collectors.toList());
             case ("REJECTED"):
-                return bookingRepository.findBookingsByItem_Owner_IdOrderByStartDesc(userId)
-                        .stream()
+                return bookingRepository.findBookingsByItem_Owner_IdOrderByStartDesc(userId).stream()
                         .filter(booking -> booking.getStatus().equals(Status.REJECTED))
                         .map(mapper::toBookingDto).collect(Collectors.toList());
             default:

@@ -30,6 +30,7 @@ public class ErrorHandler {
         log.error("Storage error - item not found or not available" + "\n" + e.getMessage());
         return new ErrorResponse("NOT_AVAILABLE", e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBookingException(BookingException e) {

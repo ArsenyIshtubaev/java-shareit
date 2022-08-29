@@ -22,17 +22,17 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="booking_id")
+    @Column(name = "booking_id")
     private Long id;
     @Column(name = "start_date")
     private LocalDateTime start;
     @Column(name = "end_date")
     private LocalDateTime end;
     @ManyToOne
-    @JoinColumn(name="item_id")
+    @JoinColumn(name = "item_id")
     private Item item;
-    @ManyToOne(optional=false)
-    @JoinColumn(name="booker_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "booker_id")
     private User booker;
     @Enumerated(EnumType.STRING)
     private Status status;

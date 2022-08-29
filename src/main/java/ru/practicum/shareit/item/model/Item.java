@@ -19,7 +19,7 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="item_id")
+    @Column(name = "item_id")
     private Long id;
     @Column(name = "item_name", nullable = false)
     private String name;
@@ -27,8 +27,8 @@ public class Item {
     private String description;
     @Column(name = "available", nullable = false)
     private Boolean available;
-    @OneToOne(optional=false)
-    @JoinColumn(name="owner_id")
+    @OneToOne(optional = false)
+    @JoinColumn(name = "owner_id")
     private User owner;
     /*@ManyToOne(optional=false)
     @JoinColumn(name="request_id")

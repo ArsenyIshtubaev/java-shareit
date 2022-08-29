@@ -35,9 +35,10 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> findAllByOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                    @RequestParam(defaultValue = "ALL") String state) {
+                                           @RequestParam(defaultValue = "ALL") String state) {
         return bookingService.findAllByOwnerId(userId, state);
     }
+
     @PostMapping
     public BookingDto create(@Valid @RequestBody BookingDtoSimple bookingDtoSimple,
                              @RequestHeader("X-Sharer-User-Id") long userId) {
@@ -49,7 +50,7 @@ public class BookingController {
     ///{bookingId}?approved={approved}
     @PatchMapping("/{bookingId}")
     public BookingDto approve(@RequestHeader("X-Sharer-User-Id") long userId,
-                             @PathVariable long bookingId, @RequestParam Boolean approved) {
+                              @PathVariable long bookingId, @RequestParam Boolean approved) {
         log.info("Получен запрос к эндпоинту: '{} {}', Подтверждение бронирование: ID: {}", "PATCH", "/bookings",
                 bookingId);
         return bookingService.approve(userId, bookingId, approved);

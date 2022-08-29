@@ -18,12 +18,12 @@ public class ItemRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="request_id")
+    @Column(name = "request_id")
     private Long id;
     @Column(name = "description", nullable = false)
     private String description;
-    @ManyToOne(optional=false)
-    @JoinColumn(name="requestor_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "requestor_id")
     private User requestor;
     @Column(name = "created")
     private LocalDateTime created;

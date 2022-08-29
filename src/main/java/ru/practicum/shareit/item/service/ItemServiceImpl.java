@@ -35,7 +35,10 @@ public class ItemServiceImpl implements ItemService {
     private final CommentMapper commentMapper;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, ItemMapper itemMapper, UserRepository userRepository, BookingRepository bookingRepository, BookingMapper bookingMapper, CommentRepository commentRepository, CommentMapper commentMapper) {
+    public ItemServiceImpl(ItemRepository itemRepository, ItemMapper itemMapper,
+                           UserRepository userRepository, BookingRepository bookingRepository,
+                           BookingMapper bookingMapper, CommentRepository commentRepository,
+                           CommentMapper commentMapper) {
         this.itemRepository = itemRepository;
         this.itemMapper = itemMapper;
         this.userRepository = userRepository;
