@@ -3,7 +3,9 @@ package ru.practicum.shareit.item.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
@@ -26,7 +28,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> findAll(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDtoWithBooking> findAll(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.findAll(userId);
     }
 
@@ -38,15 +40,28 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long id, @RequestBody ItemDto itemDto) {
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") long userId,
+                          @PathVariable long id,
+                          @RequestBody ItemDto itemDto) {
         log.info("PATCH user id={}, item id={}", userId, id);
         return itemService.update(itemDto, userId, id);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto findItemById(@PathVariable long id) {
-        log.info("Get item id={}", id);
-        return itemService.findById(id);
+    //POST /items/{itemId}/comment
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                    @Valid @RequestBody CommentDto commentDto,
+                                    @PathVariable long itemId) {
+        log.info("Получен запрос к эндпоинту: '{} {}', Вещь с Id: {}, Комментарий: {}",
+                "POST", "/items/{itemId}/comment",
+                itemId, commentDto.getText());
+        return itemService.saveComment(userId, itemId, commentDto);
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemDtoWithBooking findItemById(@PathVariable long itemId, @RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Get item id={}", itemId);
+        return itemService.findById(itemId, userId);
     }
 
     @DeleteMapping("/{id}")

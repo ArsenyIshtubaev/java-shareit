@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.EmailValidateException;
 import ru.practicum.shareit.exception.StorageException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -27,6 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(long userId) {
+
         if (userRepository.findById(userId).isPresent()) {
             return userMapper.toUserDto(userRepository.findById(userId).get());
         }
@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto save(UserDto userDto) {
-        validateEmail(userDto);
         return userMapper.toUserDto(userRepository.save(userMapper.toUser(userDto)));
     }
 
@@ -53,10 +52,9 @@ public class UserServiceImpl implements UserService {
             oldUserDto.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
-            validateEmail(userDto);
             oldUserDto.setEmail(userDto.getEmail());
         }
-        return userMapper.toUserDto(userRepository.update(userMapper.toUser(oldUserDto)));
+        return userMapper.toUserDto(userRepository.save(userMapper.toUser(oldUserDto)));
     }
 
     @Override
@@ -64,13 +62,5 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
-    private boolean validateEmail(UserDto userDto) {
-        for (UserDto dto : findAll()) {
-            if (dto.getEmail().equals(userDto.getEmail())) {
-                throw new EmailValidateException("Duplicate email = " + userDto.getEmail());
-            }
-        }
-        return true;
     }
 
-}

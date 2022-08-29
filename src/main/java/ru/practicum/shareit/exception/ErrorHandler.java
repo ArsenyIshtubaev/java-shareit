@@ -23,4 +23,17 @@ public class ErrorHandler {
         log.error("Storage error - object not found" + "\n" + e.getMessage());
         return new ErrorResponse("NOT_FOUND", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleItemException(ItemException e) {
+        log.error("Storage error - item not found or not available" + "\n" + e.getMessage());
+        return new ErrorResponse("NOT_AVAILABLE", e.getMessage());
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBookingException(BookingException e) {
+        log.error("Storage error - incorrect request" + "\n" + e.getMessage());
+        return new ErrorResponse(e.getMessage(), "incorrect request");
+    }
 }
