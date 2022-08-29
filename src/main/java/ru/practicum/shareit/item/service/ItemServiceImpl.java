@@ -88,19 +88,19 @@ public class ItemServiceImpl implements ItemService {
 
     private void createItemDtoWithBooking(ItemDtoWithBooking itemDtoWithBooking) {
         if (!bookingRepository
-                .findBookingsByItem_IdAndEndIsBeforeOrderByEndDesc
-                        (itemDtoWithBooking.getId(), LocalDateTime.now()).isEmpty()) {
+                .findBookingsByItem_IdAndEndIsBeforeOrderByEndDesc(itemDtoWithBooking.getId(),
+                        LocalDateTime.now()).isEmpty()) {
             BookingDtoForItem lastBooking = bookingMapper.toBookingDtoForItem(bookingRepository
-                    .findBookingsByItem_IdAndEndIsBeforeOrderByEndDesc
-                            (itemDtoWithBooking.getId(), LocalDateTime.now()).get(0));
+                    .findBookingsByItem_IdAndEndIsBeforeOrderByEndDesc(itemDtoWithBooking.getId(),
+                            LocalDateTime.now()).get(0));
             itemDtoWithBooking.setLastBooking(lastBooking);
         }
         if (!bookingRepository
-                .findBookingsByItem_IdAndStartIsAfterOrderByStartDesc
-                        (itemDtoWithBooking.getId(), LocalDateTime.now()).isEmpty()) {
+                .findBookingsByItem_IdAndStartIsAfterOrderByStartDesc(itemDtoWithBooking.getId(),
+                        LocalDateTime.now()).isEmpty()) {
             BookingDtoForItem nextBooking = bookingMapper.toBookingDtoForItem(bookingRepository
-                    .findBookingsByItem_IdAndStartIsAfterOrderByStartDesc
-                            (itemDtoWithBooking.getId(), LocalDateTime.now()).get(0));
+                    .findBookingsByItem_IdAndStartIsAfterOrderByStartDesc(itemDtoWithBooking.getId(),
+                            LocalDateTime.now()).get(0));
             itemDtoWithBooking.setNextBooking(nextBooking);
         }
     }
