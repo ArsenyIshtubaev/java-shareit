@@ -19,5 +19,5 @@ public interface BookingService {
 
     BookingDto approve(long userId, long bookingId, Boolean approved);
 
-    List<BookingDto> findAllByOwnerId(long userId, String state);
+    List<BookingDto> findAllByItemOwnerId(long userId, String state);
 }
