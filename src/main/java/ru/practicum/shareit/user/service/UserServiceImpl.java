@@ -26,11 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(long userId) {
-
-        if (userRepository.findById(userId).isPresent()) {
-            return userMapper.toUserDto(userRepository.findById(userId).get());
-        }
-        throw new StorageException("Пользователя с Id = " + userId + " нет в БД");
+        return userMapper.toUserDto(userRepository.findById(userId)
+                .orElseThrow(() -> new StorageException("Пользователя с Id = " + userId + " нет в БД")));
     }
 
     @Override
@@ -62,5 +59,5 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
-    }
+}
 

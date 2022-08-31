@@ -41,14 +41,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findById(long bookingId, long userId) {
-        if (bookingRepository.findById(bookingId).isPresent()) {
-            if (bookingRepository.findById(bookingId).get().getBooker().getId() != userId
-                    && bookingRepository.findById(bookingId).get().getItem().getOwner().getId() != userId) {
-                throw new StorageException("Incorrect userId");
-            }
-            return mapper.toBookingDto(bookingRepository.findById(bookingId).get());
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new StorageException("Бронирования с Id = " + bookingId + " нет в БД"));
+        if (booking.getBooker().getId() != userId
+                && booking.getItem().getOwner().getId() != userId) {
+            throw new StorageException("Incorrect userId");
         }
-        throw new StorageException("Бронирования с Id = " + bookingId + " нет в БД");
+        return mapper.toBookingDto(booking);
+
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BookingException;
 import ru.practicum.shareit.exception.StorageException;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -50,21 +52,21 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDtoWithBooking findById(long itemId, long userId) {
-        if (itemRepository.findById(itemId).isPresent()) {
-            ItemDtoWithBooking itemDtoWithBooking = itemMapper
-                    .toItemDtoWithBooking(itemRepository.findById(itemId).get());
-            if (itemRepository.findById(itemId).get().getOwner().getId() == userId) {
-                createItemDtoWithBooking(itemDtoWithBooking);
-            }
-            if (!commentRepository.findAllByItem_Id(itemId).isEmpty()) {
-                itemDtoWithBooking.setComments(commentRepository.findAllByItem_Id(itemId)
-                        .stream().map(commentMapper::toCommentDto)
-                        .collect(Collectors.toList())
-                );
-            }
-            return itemDtoWithBooking;
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new StorageException("Вещи с Id = " + itemId + " нет в БД"));
+        ItemDtoWithBooking itemDtoWithBooking = itemMapper
+                .toItemDtoWithBooking(item);
+        if (item.getOwner().getId() == userId) {
+            createItemDtoWithBooking(itemDtoWithBooking);
         }
-        throw new StorageException("Вещи с Id = " + itemId + " нет в БД");
+        List<Comment> comments = commentRepository.findAllByItem_Id(itemId);
+        if (!comments.isEmpty()) {
+            itemDtoWithBooking.setComments(comments
+                    .stream().map(commentMapper::toCommentDto)
+                    .collect(Collectors.toList())
+            );
+        }
+        return itemDtoWithBooking;
     }
 
     @Override
@@ -75,11 +77,11 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
         for (ItemDtoWithBooking itemDtoWithBooking : result) {
             createItemDtoWithBooking(itemDtoWithBooking);
-            if (!commentRepository.findAllByItem_Id(itemDtoWithBooking.getId()).isEmpty()) {
-                itemDtoWithBooking.setComments(commentRepository.findAllByItem_Id(itemDtoWithBooking.getId())
+            List<Comment> comments = commentRepository.findAllByItem_Id(itemDtoWithBooking.getId());
+            if (!comments.isEmpty()) {
+                itemDtoWithBooking.setComments(comments
                         .stream().map(commentMapper::toCommentDto)
-                        .collect(Collectors.toList())
-                );
+                        .collect(Collectors.toList()));
             }
         }
         result.sort(Comparator.comparing(ItemDtoWithBooking::getId));
@@ -87,20 +89,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void createItemDtoWithBooking(ItemDtoWithBooking itemDtoWithBooking) {
-        if (!bookingRepository
+        List<Booking> lastBookings = bookingRepository
                 .findBookingsByItem_IdAndEndIsBeforeOrderByEndDesc(itemDtoWithBooking.getId(),
-                        LocalDateTime.now()).isEmpty()) {
-            BookingDtoForItem lastBooking = bookingMapper.toBookingDtoForItem(bookingRepository
-                    .findBookingsByItem_IdAndEndIsBeforeOrderByEndDesc(itemDtoWithBooking.getId(),
-                            LocalDateTime.now()).get(0));
+                        LocalDateTime.now());
+        if (!lastBookings.isEmpty()) {
+            BookingDtoForItem lastBooking = bookingMapper.toBookingDtoForItem(lastBookings.get(0));
             itemDtoWithBooking.setLastBooking(lastBooking);
         }
-        if (!bookingRepository
+        List<Booking> nextBookings = bookingRepository
                 .findBookingsByItem_IdAndStartIsAfterOrderByStartDesc(itemDtoWithBooking.getId(),
-                        LocalDateTime.now()).isEmpty()) {
-            BookingDtoForItem nextBooking = bookingMapper.toBookingDtoForItem(bookingRepository
-                    .findBookingsByItem_IdAndStartIsAfterOrderByStartDesc(itemDtoWithBooking.getId(),
-                            LocalDateTime.now()).get(0));
+                        LocalDateTime.now());
+        if (!nextBookings.isEmpty()) {
+            BookingDtoForItem nextBooking = bookingMapper.toBookingDtoForItem(nextBookings.get(0));
             itemDtoWithBooking.setNextBooking(nextBooking);
         }
     }
@@ -118,9 +118,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto saveComment(long userId, long itemId, CommentDto commentDto) {
-        itemRepository.findById(itemId).orElseThrow(() ->
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new StorageException("Вещи с Id = " + itemId + " нет в БД"));
-        userRepository.findById(userId).orElseThrow(() ->
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new StorageException("Пользователя с Id = " + userId + " нет в БД"));
         if (bookingRepository.searchBookingByBooker_IdAndItem_IdAndEndIsBefore(userId, itemId, LocalDateTime.now())
                 .stream().noneMatch(booking -> booking.getStatus().equals(Status.APPROVED))
@@ -128,8 +128,8 @@ public class ItemServiceImpl implements ItemService {
             throw new BookingException("Пользователь с Id = " + userId + " не брал в аренду вещь с Id = " + itemId);
         }
         Comment comment = commentMapper.toComment(commentDto);
-        comment.setItem(itemRepository.findById(itemId).orElse(null));
-        comment.setAuthor(userRepository.findById(userId).orElse(null));
+        comment.setItem(item);
+        comment.setAuthor(user);
         return commentMapper.toCommentDto(commentRepository.save(comment));
     }
 
