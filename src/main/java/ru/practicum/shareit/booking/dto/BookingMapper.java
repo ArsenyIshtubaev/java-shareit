@@ -34,6 +34,7 @@ public class BookingMapper {
                 null,
                 Status.WAITING);
     }
+
     public BookingDtoSimple toBookingDtoSimple(Booking booking) {
         return new BookingDtoSimple(booking.getId(),
                 booking.getStart(),
