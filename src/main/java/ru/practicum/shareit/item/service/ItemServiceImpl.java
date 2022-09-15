@@ -113,8 +113,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto save(ItemDto itemDto, long userId) {
         Item item = itemMapper.toItem(itemDto);
-        item.setOwner(userRepository.findById(userId).
-                orElseThrow(() -> new StorageException("Incorrect userId")));
+        item.setOwner(userRepository.findById(userId)
+                .orElseThrow(() -> new StorageException("Incorrect userId")));
         Long requestId = itemDto.getRequestId();
         if (requestId != null) {
             item.setItemRequest(itemRequestRepository.findById(requestId)

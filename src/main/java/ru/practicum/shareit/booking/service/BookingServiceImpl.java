@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> findAll(long userId, String state, int from, int size) {
 
         userRepository.findById(userId).orElseThrow(() -> new StorageException("Incorrect userId"));
-        int page = from/size;
+        int page = from / size;
         Pageable pageable = PageRequest.of(page, size, Sort.by("start").descending());
 
         try {
@@ -68,10 +68,10 @@ public class BookingServiceImpl implements BookingService {
                             .map(mapper::toBookingDto).collect(Collectors.toList());
                 case CURRENT:
                     return bookingRepository.findCurrentBookingsByBooker_Id(userId, LocalDateTime.now(),
-                                    pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
+                            pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
                 case PAST:
                     return bookingRepository.findBookingsByBooker_IdAndEndIsBefore(userId, LocalDateTime.now(),
-                                    pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
+                            pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
                 case FUTURE:
                     return bookingRepository.findByBooker_IdAndStartAfter(userId, LocalDateTime.now(), pageable)
                             .stream().map(mapper::toBookingDto).collect(Collectors.toList());
@@ -165,8 +165,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllByItemOwnerId(long userId, String state, int from, int size) {
         userRepository.findById(userId).orElseThrow(() -> new StorageException("Incorrect userId"));
-        int page = from/size;
-        Pageable pageable = PageRequest.of(page, size , Sort.by("start").descending());
+        int page = from / size;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("start").descending());
         List<BookingDto> result = bookingRepository.searchBookingByItem_Owner_Id(userId, pageable).stream()
                 .map(mapper::toBookingDto).collect(Collectors.toList());
         if (result.isEmpty()) {
@@ -178,13 +178,13 @@ public class BookingServiceImpl implements BookingService {
                     return result;
                 case CURRENT:
                     return bookingRepository.findCurrentBookingsByItem_Owner_Id(userId, LocalDateTime.now(),
-                                    pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
+                            pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
                 case PAST:
                     return bookingRepository.findBookingsByItem_Owner_IdAndEndIsBefore(userId, LocalDateTime.now(),
-                                    pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
+                            pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
                 case FUTURE:
                     return bookingRepository.searchBookingByItem_Owner_IdAndStartIsAfter(userId, LocalDateTime.now(),
-                                    pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
+                            pageable).stream().map(mapper::toBookingDto).collect(Collectors.toList());
                 case WAITING:
                     return bookingRepository.findBookingsByItem_Owner_Id(userId, pageable).stream().skip(from)
                             .filter(booking -> booking.getStatus().equals(Status.WAITING))

@@ -30,7 +30,7 @@ class BookingDtoForItemTest {
     }
 
     @Test
-    void toBookingDtoForItem(){
+    void toBookingDtoForItem() {
         booking = createBooking();
         BookingDtoForItem bookingDtoForItem1 = mapper.toBookingDtoForItem(booking);
         assertNotNull(bookingDtoForItem1);
@@ -48,14 +48,15 @@ class BookingDtoForItemTest {
         bookingDtoForItem.setId(5L);
         assertEquals(bookingDtoForItem.getId(), 5);
     }
+
     @Test
-    void getBookerId(){
+    void getBookerId() {
         Long bookerId = bookingDtoForItem.getBookerId();
         assertEquals(bookerId, 2);
     }
 
     @Test
-    void setBookerId(){
+    void setBookerId() {
         bookingDtoForItem.setBookerId(5L);
         assertEquals(bookingDtoForItem.getBookerId(), 5);
     }

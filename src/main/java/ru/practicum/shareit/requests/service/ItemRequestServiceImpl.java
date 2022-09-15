@@ -64,13 +64,13 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDtoWithItems> findAllWithPageable(long userId, int from, int size) {
-        int page = from/size;
+        int page = from / size;
         Pageable pageable = PageRequest.of(page, size, Sort.by("created"));
         userRepository.findById(userId).orElseThrow(() ->
                 new StorageException("Пользователя с Id = " + userId + " нет в БД"));
         return itemRequestRepository.findAll(pageable)
                 .stream()
-                .filter(itemRequest -> itemRequest.getRequestor().getId()!=userId)
+                .filter(itemRequest -> itemRequest.getRequestor().getId() != userId)
                 .map(mapper::toItemRequestDtoWithItems)
                 .collect(Collectors.toList());
     }
