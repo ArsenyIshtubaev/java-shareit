@@ -39,7 +39,7 @@ class IntegrationUserServiceImplTest {
     }
 
     @Test
-    void findById(){
+    void findById() {
         service.save(makeUserDto());
         UserDto userDto = service.findById(1);
         assertThat(userDto.getId(), notNullValue());
