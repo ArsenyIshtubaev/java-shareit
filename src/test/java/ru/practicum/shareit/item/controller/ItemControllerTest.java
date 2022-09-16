@@ -2,15 +2,13 @@ package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
@@ -30,23 +28,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(ItemController.class)
+@AutoConfigureMockMvc
 class ItemControllerTest {
-    @Mock
+    @MockBean
     private ItemService itemService;
-    @InjectMocks
-    private ItemController itemController;
+    @Autowired
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
     private final ItemMapper itemMapper = new ItemMapper();
-
-    @BeforeEach
-    void beforeEach() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(itemController)
-                .build();
-        mapper.registerModule(new JavaTimeModule());
-    }
 
     private Item createItem() {
         User user1 = new User(1L, "user1", "user1@mail.ru");
@@ -120,6 +110,7 @@ class ItemControllerTest {
 
     @Test
     void createComment() throws Exception {
+        mapper.registerModule(new JavaTimeModule());
         CommentDto commentDto = createCommentDto();
         Item item = createItem();
         when(itemService.saveComment(1, 1, commentDto))

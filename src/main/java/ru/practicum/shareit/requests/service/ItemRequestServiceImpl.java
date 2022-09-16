@@ -75,4 +75,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteById(long itemRequestId) {
+        itemRequestRepository.deleteById(itemRequestId);
+    }
+
 }

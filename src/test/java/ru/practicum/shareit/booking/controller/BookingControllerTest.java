@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoSimple;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -31,13 +30,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.practicum.shareit.booking.enums.Status.APPROVED;
 import static ru.practicum.shareit.booking.enums.Status.REJECTED;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(BookingController.class)
+@AutoConfigureMockMvc
 class BookingControllerTest {
 
-    @Mock
+    @MockBean
     private BookingService bookingService;
-    @InjectMocks
-    private BookingController bookingController;
+
+    @Autowired
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
     private final BookingMapper bookingMapper = new BookingMapper();
@@ -45,9 +45,6 @@ class BookingControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(bookingController)
-                .build();
         mapper.registerModule(new JavaTimeModule());
         booking = createBooking();
     }

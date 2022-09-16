@@ -14,4 +14,5 @@ public interface ItemRequestService {
 
     List<ItemRequestDtoWithItems> findAllWithPageable(long userId, int from, int size);
 
+    void deleteById(long itemRequestId);
 }
