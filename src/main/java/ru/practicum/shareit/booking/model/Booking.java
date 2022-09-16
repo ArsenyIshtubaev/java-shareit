@@ -36,4 +36,9 @@ public class Booking {
     private User booker;
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public Booking setStatus(Status status) {
+        this.status = status;
+        return this;
+    }
 }

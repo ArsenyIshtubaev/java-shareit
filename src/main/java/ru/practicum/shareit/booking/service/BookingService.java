@@ -9,7 +9,7 @@ public interface BookingService {
 
     BookingDto findById(long bookingId, long userId);
 
-    List<BookingDto> findAll(long userId, String state);
+    List<BookingDto> findAll(long userId, String state, int from, int size);
 
     BookingDto save(BookingDtoSimple bookingDtoSimple, long userId);
 
@@ -19,5 +19,6 @@ public interface BookingService {
 
     BookingDto approve(long userId, long bookingId, Boolean approved);
 
-    List<BookingDto> findAllByItemOwnerId(long userId, String state);
+    List<BookingDto> findAllByItemOwnerId(long userId, String state,  int from, int size);
+
 }

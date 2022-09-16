@@ -4,23 +4,24 @@ CREATE TABLE IF NOT EXISTS users (
                                      email VARCHAR(255) NOT NULL,
                                     UNIQUE (email)
 );
---CREATE TABLE IF NOT EXISTS requests (
-                                       -- request_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                                        --description VARCHAR(255) NOT NULL,
-                                        --requestor_id BIGINT,
-                                       -- created timestamp WITHOUT TIME ZONE,
-                                        --CONSTRAINT fk_request_to_users FOREIGN KEY(request_id) REFERENCES users(user_id)
---);
+CREATE TABLE IF NOT EXISTS requests (
+                                        request_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                                        description VARCHAR(255) NOT NULL,
+                                        requestor_id BIGINT,
+                                        created timestamp WITHOUT TIME ZONE,
+                                        CONSTRAINT fk_request_to_users FOREIGN KEY(requestor_id)
+                                            REFERENCES users(user_id)
+);
 CREATE TABLE IF NOT EXISTS items (
                                      item_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                      item_name VARCHAR(255) NOT NULL,
                                      description VARCHAR(255) NOT NULL,
                                      available boolean NOT NULL,
                                      owner_id BIGINT,
-                                     --request_id BIGINT,
+                                     request_id BIGINT REFERENCES requests(request_id),
                                      CONSTRAINT fk_items_to_users FOREIGN KEY(owner_id) REFERENCES users(user_id)
-                                     --CONSTRAINT fk_items_to_request FOREIGN KEY(request_id) REFERENCES requests(request_id)
 );
+--
 
 CREATE TABLE IF NOT EXISTS bookings (
                                         booking_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
