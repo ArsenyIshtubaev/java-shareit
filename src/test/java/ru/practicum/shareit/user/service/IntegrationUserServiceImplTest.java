@@ -40,8 +40,8 @@ class IntegrationUserServiceImplTest {
 
     @Test
     void findById() {
-        service.save(makeUserDto());
-        UserDto userDto = service.findById(1);
+        UserDto userDto1 = service.save(makeUserDto());
+        UserDto userDto = service.findById(userDto1.getId());
         assertThat(userDto.getId(), notNullValue());
         assertThat(userDto.getName(), equalTo("Пётр"));
         assertThat(userDto.getEmail(), equalTo("some@email.com"));
